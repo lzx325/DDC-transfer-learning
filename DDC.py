@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -89,13 +89,13 @@ def train_ddcnet(epoch, model, learning_rate, source_loader, target_loader):
         if i % log_interval == 0:
             print('Train Epoch {}: [{}/{} ({:.0f}%)]\tLoss: {:.6f}\tsoft_Loss: {:.6f}\tmmd_Loss: {:.6f}'.format(
                 epoch, i * len(source_data), len(source_loader) * BATCH_SIZE,
-                100. * i / len(source_loader), loss.data[0], clf_loss.data[0], mmd_loss.data[0]))
+                100. * i / len(source_loader), loss.data.item(), clf_loss.data.item(), mmd_loss.data.item()))
 
     total_loss /= len(source_loader)
     acc_train = float(correct) * 100. / (len(source_loader) * BATCH_SIZE)
 
     print('{} set: Average classification loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)'.format(
-        SOURCE_NAME, total_loss.data[0], correct, len(source_loader.dataset), acc_train))
+        SOURCE_NAME, total_loss.item(), correct, len(source_loader.dataset), acc_train))
 
 
 def test_ddcnet(model, target_loader):
@@ -123,7 +123,7 @@ def test_ddcnet(model, target_loader):
 
     test_loss /= len(target_loader)
     print('{} set: Average classification loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
-        TARGET_NAME, test_loss.data[0], correct, len(target_loader.dataset),
+        TARGET_NAME, test_loss.data.item(), correct, len(target_loader.dataset),
         100. * correct / len(target_loader.dataset)))
     return correct
 
